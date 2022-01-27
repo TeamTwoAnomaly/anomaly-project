@@ -2,27 +2,39 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import mason_functions as mf
 import warnings
 warnings.filterwarnings('ignore')
 
-import env
 import os
 
-# define url 
-url = mf.get_db_url('curriculum_logs')
 
-# define sql query
-sql = '''
-SELECT * 
-FROM logs
-LEFT JOIN cohorts on logs.cohort_id = cohorts.id
-'''
+# Thank you, Ryan Orsinger
+def get_db_url(db_name):
+
+    # import direct credentials
+    from env import host, user, password
+
+    # use credentials
+    return f'mysql+pymysql://{user}:{password}@{host}/{db_name}'
+
+
 
 def get_logs():
 
+    # define url 
+    url = get_db_url('curriculum_logs')
+
+    # define sql query
+    sql = '''
+    SELECT * 
+    FROM logs
+    LEFT JOIN cohorts on logs.cohort_id = cohorts.id
+    '''
+
     # set up if-conditional to see if a .csv is cached
     if os.path.isfile('curriculum_logs.csv'):
+
+        # read .csv into pandas dataframe
         df = pd.read_csv('curriculum_logs.csv', index_col = 0)
 
     else:

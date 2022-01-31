@@ -83,5 +83,12 @@ def prep_logs():
 
     # drop these columns
     df = df.drop(columns = extra)
+    
+    # drop records where the paths don't give us what we want
+    df = df[df.path.notnull()]
+    df = df[df.path != '/']
+    df = df[df.path != 'toc']
+    df = df[df.path.str.contains('.jpg') == False]
+    df = df[df.path.str.contains('.html') == False]
 
     return df
